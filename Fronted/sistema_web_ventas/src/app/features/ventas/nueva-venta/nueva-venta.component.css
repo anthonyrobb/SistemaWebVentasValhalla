@@ -1,0 +1,26 @@
+/* Ajustar para que el contenido se adapte al recuadro */
+:host {
+  display: block;
+}
+
+/* Evitar márgenes o paddings adicionales que puedan interferir */
+.row {
+  margin: 0;
+}
+
+/* Los cards dentro del componente no necesitan sombra ni bordes adicionales */
+.card {
+  border: none;
+  box-shadow: none;
+  background: transparent;
+}
+
+.card-header {
+  background-color: #891738; /* Usamos el color principal del tema */
+  color: white;
+  border-radius: 8px 8px 0 0;
+}
+
+.table {
+  margin-bottom: 0;
+}

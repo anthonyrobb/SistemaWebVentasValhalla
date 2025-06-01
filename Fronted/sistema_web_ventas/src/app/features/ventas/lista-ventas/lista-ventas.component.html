@@ -1,0 +1,68 @@
+<div>
+  <h1 class="display-4 mb-4 text-primary">Lista de Ventas</h1>
+
+  <!-- Formulario de filtros -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">Filtros</h5>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="filterForm" (ngSubmit)="applyFilters()">
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label for="fechaInicio" class="form-label">Fecha Inicio</label>
+            <input
+              type="date"
+              class="form-control"
+              id="fechaInicio"
+              formControlName="fechaInicio"
+              (change)="applyFilters()">
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="fechaFin" class="form-label">Fecha Fin</label>
+            <input
+              type="date"
+              class="form-control"
+              id="fechaFin"
+              formControlName="fechaFin"
+              (change)="applyFilters()">
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="tipoVenta" class="form-label">Tipo de Venta</label>
+            <select
+              class="form-control"
+              id="tipoVenta"
+              formControlName="tipoVenta"
+              (change)="applyFilters()">
+              <option value="">Todos</option>
+              <option *ngFor="let tipo of tiposVenta" [value]="tipo">{{ tipo }}</option>
+            </select>
+          </div>
+        </div>
+        <button type="button" class="btn btn-secondary" (click)="resetFilters()">Limpiar Filtros</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Tabla de ventas -->
+  <div class="table-responsive">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Fecha</th>
+          <th>Tipo de Venta</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let venta of filteredVentas">
+          <td>{{ venta.id }}</td>
+          <td>{{ venta.fecha }}</td>
+          <td>{{ venta.tipoVenta }}</td>
+          <td>{{ venta.total | currency }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

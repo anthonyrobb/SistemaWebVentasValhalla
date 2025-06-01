@@ -1,0 +1,175 @@
+/* Layout principal */
+.min-vh-100 {
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background-color: #fff; /* Fondo blanco */
+  color: #000; /* Texto negro */
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 100vh;
+  overflow-y: auto;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Sombra suave para delimitar el sidebar */
+}
+
+/* Logo */
+.logo-container {
+  padding-bottom: 20px;
+}
+
+.logo-img {
+  max-width: 150px;
+  height: auto;
+}
+
+/* Título "Menú" */
+
+
+.menu-title {
+  font-size: 0.85rem;
+  letter-spacing: 1.5px; /* Espaciado entre letras para elegancia */
+  color: #2d3436; /* Color oscuro moderno */
+}
+
+.title-underline {
+  height: 2px;
+  width: 40px;
+  background: linear-gradient(90deg, #413f3f, #c1435c); /* Coincide con el degradado */
+  margin-top: 8px;
+  border-radius: 2px;
+}
+
+/* Menú de navegación */
+.nav {
+  padding: 0;
+}
+
+.nav-item {
+  /* Eliminamos bordes para un diseño más limpio */
+}
+
+/* Enlaces del menú */
+.nav-link {
+  padding: 12px 20px;
+  color: #000; /* Texto negro */
+  cursor: pointer;
+  transition: color 0.3s;
+  display: flex;
+  align-items: center;
+  position: relative; /* Necesario para el pseudo-elemento */
+}
+
+.nav-link:hover {
+  color: #891738; /* Cambio de color al pasar el mouse */
+}
+
+/* Contenedor del texto e ícono */
+.nav-content {
+  display: flex;
+  align-items: center;
+  z-index: 1; /* Asegura que el texto esté sobre el fondo */
+}
+
+/* Opción activa */
+.nav-link.active {
+  color: #fff; /* Texto blanco */
+}
+
+.nav-link.active .nav-content {
+  position: relative;
+}
+
+.nav-link.active::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  right: 10px;
+  height: 42px; /* Aumentamos la altura para más espacio */
+  background-color: #891738; /* Fondo del resaltado */
+  border-radius: 8px; /* Puntas redondeadas */
+  transform: translateY(-50%);
+  z-index: 0; /* Detrás del texto */
+}
+
+/* Íconos */
+.nav-link i {
+  font-size: 1.2rem;
+  color: inherit; /* Hereda el color del texto */
+}
+
+/* Submenú */
+.submenu {
+  background-color: #fff; /* Fondo blanco */
+  list-style: none;
+  padding: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out;
+}
+
+.submenu.show {
+  max-height: 200px; /* Ajusta según la altura del submenú */
+}
+
+.submenu .nav-link {
+  padding: 10px 20px;
+}
+
+/* Contenido principal */
+.content {
+  margin-left: 250px; /* Espacio para el sidebar */
+  background-color: #f8f9fa;
+}
+
+/* Título */
+.display-4 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #891738; /* Color principal */
+}
+
+/* Botón Cerrar Sesión */
+.btn-outline-dark {
+  border-color: #000;
+  color: #000;
+}
+
+.btn-outline-dark:hover {
+  background-color: #891738;
+  color: #fff;
+  border-color: #891738;
+}
+
+/* Responsividad */
+@media (max-width: 767.98px) {
+  .sidebar {
+    width: 200px;
+  }
+
+  .content {
+    margin-left: 200px;
+  }
+
+  .display-4 {
+    font-size: 2rem;
+  }
+
+  .logo-img {
+    max-width: 120px;
+  }
+
+  .menu-title {
+    font-size: 0.8rem;
+  }
+
+  .nav-link.active::before {
+    left: 8px;
+    right: 8px;
+    height: 38px; /* Aumentamos la altura para pantallas pequeñas */
+  }
+}
