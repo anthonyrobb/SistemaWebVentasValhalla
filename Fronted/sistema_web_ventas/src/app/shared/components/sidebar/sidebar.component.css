@@ -27,12 +27,20 @@
 }
 
 /* Título "Menú" */
-
+.menu-header {
+  position: relative;
+}
 
 .menu-title {
   font-size: 0.85rem;
   letter-spacing: 1.5px; /* Espaciado entre letras para elegancia */
   color: #2d3436; /* Color oscuro moderno */
+}
+
+.text-gradient {
+  background: linear-gradient(90deg, #413f3f, #c1435c); /* Gradiente para el texto */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .title-underline {
@@ -71,29 +79,27 @@
 .nav-content {
   display: flex;
   align-items: center;
-  z-index: 1; /* Asegura que el texto esté sobre el fondo */
 }
 
 /* Opción activa */
 .nav-link.active {
-  color: #fff; /* Texto blanco */
+  color: #891738; /* Cambiamos el texto a color principal */
 }
 
+/* Ajustar el contenedor del texto para el recuadro */
 .nav-link.active .nav-content {
-  position: relative;
+  background-color: #891738; /* Fondo del recuadro */
+  color: #fff; /* Texto blanco dentro del recuadro */
+  border-radius: 8px; /* Bordes redondeados */
+  padding: 6px 12px; /* Espaciado interno del recuadro */
+  display: inline-flex; /* Ajusta el tamaño al contenido */
+  border: 1px solid #a31e47; /* Borde ligeramente más claro para definición */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra ligera para efecto flotante */
 }
 
+/* Eliminamos el pseudo-elemento ::before, ya no lo necesitamos */
 .nav-link.active::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 10px;
-  right: 10px;
-  height: 42px; /* Aumentamos la altura para más espacio */
-  background-color: #891738; /* Fondo del resaltado */
-  border-radius: 8px; /* Puntas redondeadas */
-  transform: translateY(-50%);
-  z-index: 0; /* Detrás del texto */
+  content: none; /* Desactivamos el fondo anterior */
 }
 
 /* Íconos */
@@ -117,7 +123,7 @@
 }
 
 .submenu .nav-link {
-  padding: 10px 20px;
+  padding: 10px 20px 10px 40px; /* Ajustamos el padding para las subopciones */
 }
 
 /* Contenido principal */
@@ -165,11 +171,5 @@
 
   .menu-title {
     font-size: 0.8rem;
-  }
-
-  .nav-link.active::before {
-    left: 8px;
-    right: 8px;
-    height: 38px; /* Aumentamos la altura para pantallas pequeñas */
   }
 }
