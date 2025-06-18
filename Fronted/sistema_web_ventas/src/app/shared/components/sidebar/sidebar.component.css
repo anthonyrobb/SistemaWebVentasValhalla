@@ -6,19 +6,21 @@
 /* Sidebar */
 .sidebar {
   width: 250px;
-  background-color: #fff; /* Fondo blanco */
-  color: #000; /* Texto negro */
+  background-color: #fff;
+  color: #000;
   display: flex;
   flex-direction: column;
   position: fixed;
   height: 100vh;
   overflow-y: auto;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Sombra suave para delimitar el sidebar */
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
 /* Logo */
 .logo-container {
-  padding-bottom: 20px;
+  padding: 20px 0;
+  text-align: center;
+  position: relative;
 }
 
 .logo-img {
@@ -33,12 +35,12 @@
 
 .menu-title {
   font-size: 0.85rem;
-  letter-spacing: 1.5px; /* Espaciado entre letras para elegancia */
-  color: #2d3436; /* Color oscuro moderno */
+  letter-spacing: 1.5px;
+  color: #2d3436;
 }
 
 .text-gradient {
-  background: linear-gradient(90deg, #413f3f, #c1435c); /* Gradiente para el texto */
+  background: linear-gradient(90deg, #413f3f, #c1435c);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -46,7 +48,7 @@
 .title-underline {
   height: 2px;
   width: 40px;
-  background: linear-gradient(90deg, #413f3f, #c1435c); /* Coincide con el degradado */
+  background: linear-gradient(90deg, #413f3f, #c1435c);
   margin-top: 8px;
   border-radius: 2px;
 }
@@ -54,6 +56,7 @@
 /* Menú de navegación */
 .nav {
   padding: 0;
+  flex-grow: 1;
 }
 
 .nav-item {
@@ -63,16 +66,20 @@
 /* Enlaces del menú */
 .nav-link {
   padding: 12px 20px;
-  color: #000; /* Texto negro */
+  color: #000;
   cursor: pointer;
-  transition: color 0.3s;
   display: flex;
   align-items: center;
-  position: relative; /* Necesario para el pseudo-elemento */
+  transition: color 0.3s ease;
 }
 
 .nav-link:hover {
-  color: #891738; /* Cambio de color al pasar el mouse */
+  color: #891738;
+}
+
+/* Opción activa */
+.nav-link.active {
+  color: #891738;
 }
 
 /* Contenedor del texto e ícono */
@@ -81,36 +88,16 @@
   align-items: center;
 }
 
-/* Opción activa */
-.nav-link.active {
-  color: #891738; /* Cambiamos el texto a color principal */
-}
-
-/* Ajustar el contenedor del texto para el recuadro */
-.nav-link.active .nav-content {
-  background-color: #891738; /* Fondo del recuadro */
-  color: #fff; /* Texto blanco dentro del recuadro */
-  border-radius: 8px; /* Bordes redondeados */
-  padding: 6px 12px; /* Espaciado interno del recuadro */
-  display: inline-flex; /* Ajusta el tamaño al contenido */
-  border: 1px solid #a31e47; /* Borde ligeramente más claro para definición */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra ligera para efecto flotante */
-}
-
-/* Eliminamos el pseudo-elemento ::before, ya no lo necesitamos */
-.nav-link.active::before {
-  content: none; /* Desactivamos el fondo anterior */
-}
-
 /* Íconos */
 .nav-link i {
   font-size: 1.2rem;
-  color: inherit; /* Hereda el color del texto */
+  color: inherit;
+  margin-right: 8px;
 }
 
 /* Submenú */
 .submenu {
-  background-color: #fff; /* Fondo blanco */
+  background-color: #fff;
   list-style: none;
   padding: 0;
   max-height: 0;
@@ -119,16 +106,16 @@
 }
 
 .submenu.show {
-  max-height: 200px; /* Ajusta según la altura del submenú */
+  max-height: 200px;
 }
 
 .submenu .nav-link {
-  padding: 10px 20px 10px 40px; /* Ajustamos el padding para las subopciones */
+  padding: 10px 20px 10px 40px;
 }
 
 /* Contenido principal */
 .content {
-  margin-left: 250px; /* Espacio para el sidebar */
+  margin-left: 250px;
   background-color: #f8f9fa;
 }
 
@@ -136,7 +123,7 @@
 .display-4 {
   font-size: 2.5rem;
   font-weight: bold;
-  color: #891738; /* Color principal */
+  color: #891738;
 }
 
 /* Botón Cerrar Sesión */
@@ -171,5 +158,68 @@
 
   .menu-title {
     font-size: 0.8rem;
+  }
+}
+
+/* Añadido para el menú responsivo */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.header {
+  position: relative;
+  z-index: 1000;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-toggler {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  display: none;
+}
+
+.sidebar.collapsed {
+  width: 60px;
+}
+
+.sidebar.collapsed .nav-content,
+.sidebar.collapsed .menu-header,
+.sidebar.collapsed .logo-container {
+  display: none;
+}
+
+.sidebar.collapsed .nav-link i {
+  margin-right: 0;
+}
+
+.content.collapsed-content {
+  margin-left: 60px;
+}
+
+@media (max-width: 767.98px) {
+  .navbar-toggler {
+    display: block;
+  }
+  .sidebar {
+    width: 60px;
+  }
+  .sidebar:not(.collapsed) {
+    width: 200px;
+  }
+  .sidebar:not(.collapsed) .nav-content,
+  .sidebar:not(.collapsed) .menu-header,
+  .sidebar:not(.collapsed) .logo-container {
+    display: block;
+  }
+  .content {
+    margin-left: 60px;
+  }
+  .content.collapsed-content {
+    margin-left: 60px;
   }
 }

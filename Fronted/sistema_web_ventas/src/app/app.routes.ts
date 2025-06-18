@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './features/auth/login/login.component';
+import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { NuevaVentaComponent } from './features/ventas/nueva-venta/nueva-venta.component';
 import { ListaVentasComponent } from './features/ventas/lista-ventas/lista-ventas.component';
 import { ListaProductosComponent } from './features/inventario/lista-productos/lista-productos.component';
@@ -18,7 +19,7 @@ export const routes: Routes = [
     component: MainLayoutComponent,
     canActivate: [authGuard],
     children: [
-      { path: 'dashboard', component: NuevaVentaComponent }, // Placeholder temporal
+      { path: 'dashboard', component: DashboardComponent },
       { path: 'nueva-venta', component: NuevaVentaComponent },
       { path: 'ventas-list', component: ListaVentasComponent },
       { path: 'lista-productos', component: ListaProductosComponent },
@@ -26,9 +27,9 @@ export const routes: Routes = [
       { path: 'lista-compras', component: ListaComprasComponent },
       { path: 'lista-proveedores', component: ListaProveedoresComponent },
       { path: 'caja', component: CajaComponent },
-      { path: 'consulta-compras', component: NuevaVentaComponent }, // Placeholder temporal
-      { path: 'consulta-ventas', component: NuevaVentaComponent }, // Placeholder temporal
       { path: 'nuevo-usuario', component: NuevoUsuarioComponent },
+      { path: 'consulta-compras', component: DashboardComponent }, // Placeholder
+      { path: 'consulta-ventas', component: DashboardComponent }, // Placeholder
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },
