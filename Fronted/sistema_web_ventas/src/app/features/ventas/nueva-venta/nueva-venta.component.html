@@ -2,7 +2,7 @@
   <!-- Recuadro Ventas -->
   <div class="col-12 col-lg-7">
     <div class="card shadow-sm">
-      <div class="card-header bg-primary text-white">
+      <div class="card-header text-white" style="background-color: #891738;">
         <h5 class="mb-0">Ventas</h5>
       </div>
       <div class="card-body">
@@ -14,8 +14,7 @@
               class="form-control"
               id="fecha"
               formControlName="fecha"
-              (change)="updateQueryParams()"
-              [class.is-invalid]="ventaForm.get('fecha')?.invalid && ventaForm.get('fecha')?.touched">
+              [ngClass]="{'is-invalid': ventaForm.get('fecha')?.invalid && ventaForm.get('fecha')?.touched}">
             <div *ngIf="ventaForm.get('fecha')?.invalid && ventaForm.get('fecha')?.touched" class="invalid-feedback">
               La fecha es requerida
             </div>
@@ -26,8 +25,7 @@
               class="form-control"
               id="tipoPago"
               formControlName="tipoPago"
-              (change)="updateQueryParams()"
-              [class.is-invalid]="ventaForm.get('tipoPago')?.invalid && ventaForm.get('tipoPago')?.touched">
+              [ngClass]="{'is-invalid': ventaForm.get('tipoPago')?.invalid && ventaForm.get('tipoPago')?.touched}">
               <option value="" disabled>Seleccione</option>
               <option *ngFor="let tipo of tiposPago" [value]="tipo">{{ tipo }}</option>
             </select>
@@ -41,8 +39,7 @@
               class="form-control"
               id="tipoVenta"
               formControlName="tipoVenta"
-              (change)="updateQueryParams()"
-              [class.is-invalid]="ventaForm.get('tipoVenta')?.invalid && ventaForm.get('tipoVenta')?.touched">
+              [ngClass]="{'is-invalid': ventaForm.get('tipoVenta')?.invalid && ventaForm.get('tipoVenta')?.touched}">
               <option value="" disabled>Seleccione</option>
               <option *ngFor="let tipo of tiposVenta" [value]="tipo">{{ tipo }}</option>
             </select>
@@ -57,15 +54,18 @@
               class="form-control"
               id="montoPagado"
               formControlName="montoPagado"
-              (input)="calcularCambio(); updateQueryParams()"
-              [class.is-invalid]="ventaForm.get('montoPagado')?.invalid && ventaForm.get('montoPagado')?.touched">
+              [ngClass]="{'is-invalid': ventaForm.get('montoPagado')?.invalid && ventaForm.get('montoPagado')?.touched}">
             <div *ngIf="ventaForm.get('montoPagado')?.invalid && ventaForm.get('montoPagado')?.touched" class="invalid-feedback">
               El monto pagado es requerido
             </div>
           </div>
           <div class="mb-3">
             <label class="form-label">Cambio</label>
-            <input type="text" class="form-control" [value]="cambio | currency" readonly>
+            <input
+              type="text"
+              class="form-control"
+              [value]="cambio | currency"
+              readonly>
           </div>
         </form>
 
@@ -111,22 +111,33 @@
   <!-- Recuadro Agregar un Artículo -->
   <div class="col-12 col-lg-5">
     <div class="card shadow-sm">
-      <div class="card-header bg-primary text-white">
+      <div class="card-header text-white" style="background-color: #891738;">
         <h5 class="mb-0">Agregar un Artículo</h5>
       </div>
       <div class="card-body">
         <form [formGroup]="articuloForm">
-          <div class="mb-3">
-            <label for="articulo" class="form-label">Artículo</label>
-            <select
+          <div class="mb-3 position-relative">
+            <label for="searchInput" class="form-label">Artículo</label>
+            <input
+              #searchInputElement
+              type="text"
               class="form-control"
-              id="articulo"
+              id="searchInput"
               formControlName="articulo"
-              (change)="onArticuloChange()"
-              [class.is-invalid]="articuloForm.get('articulo')?.invalid && articuloForm.get('articulo')?.touched">
-              <option value="" disabled>Seleccione</option>
-              <option *ngFor="let art of articulosDisponibles" [value]="art.nombre">{{ art.nombre }}</option>
-            </select>
+              (input)="onSearchInput($event)"
+              (keydown)="onKeydown($event)"
+              placeholder="Busca un artículo..."
+              [ngClass]="{'is-invalid': articuloForm.get('articulo')?.invalid && articuloForm.get('articulo')?.touched}">
+            <!-- Sugerencias debajo del input -->
+            <div *ngIf="filteredSuggestions.length > 0" class="suggestions-dropdown">
+              <div
+                *ngFor="let suggestion of filteredSuggestions; let i = index"
+                class="suggestion-item"
+                [class.selected]="i === selectedIndex"
+                (click)="selectSuggestion(suggestion.nombre)">
+                {{ suggestion.nombre }} - S/ {{ suggestion.precio }}
+              </div>
+            </div>
             <div *ngIf="articuloForm.get('articulo')?.invalid && articuloForm.get('articulo')?.touched" class="invalid-feedback">
               El artículo es requerido
             </div>
@@ -138,8 +149,8 @@
               class="form-control"
               id="cantidad"
               formControlName="cantidad"
-              (input)="onCantidadOrDescuentoChange()"
-              [class.is-invalid]="articuloForm.get('cantidad')?.invalid && articuloForm.get('cantidad')?.touched">
+              (input)="onQuantityOrDiscountChange()"
+              [ngClass]="{'is-invalid': articuloForm.get('cantidad')?.invalid && articuloForm.get('cantidad')?.touched}">
             <div *ngIf="articuloForm.get('cantidad')?.invalid && articuloForm.get('cantidad')?.touched" class="invalid-feedback">
               La cantidad debe ser al menos 1
             </div>
@@ -160,8 +171,8 @@
               class="form-control"
               id="descuento"
               formControlName="descuento"
-              (input)="onCantidadOrDescuentoChange()"
-              [class.is-invalid]="articuloForm.get('descuento')?.invalid && articuloForm.get('descuento')?.touched">
+              (input)="onQuantityOrDiscountChange()"
+              [ngClass]="{'is-invalid': articuloForm.get('descuento')?.invalid && articuloForm.get('descuento')?.touched}">
             <div *ngIf="articuloForm.get('descuento')?.invalid && articuloForm.get('descuento')?.touched" class="invalid-feedback">
               El descuento debe ser mayor o igual a 0
             </div>

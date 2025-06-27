@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 interface Articulo {
   nombre: string;
@@ -14,20 +14,25 @@ interface Articulo {
 @Component({
   selector: 'app-nueva-venta',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './nueva-venta.component.html',
   styleUrls: ['./nueva-venta.component.css']
 })
-export class NuevaVentaComponent implements OnInit {
+export class NuevaVentaComponent implements OnInit, OnDestroy {
   private fb = new FormBuilder();
-  private route = new ActivatedRoute();
-  private router = new Router();
 
   articulosDisponibles = [
     { nombre: 'Whisky Johnnie Walker', precio: 150 },
     { nombre: 'Vodka Absolut', precio: 80 },
-    { nombre: 'Tequila Don Julio', precio: 200 }
+    { nombre: 'Tequila Don Julio', precio: 200 },
+    { nombre: 'Cerveza Cusqueña', precio: 5.50 },
+    { nombre: 'Pisco Quebranta', precio: 35.00 }
   ];
+
+  filteredSuggestions: { nombre: string; precio: number }[] = [];
+  selectedIndex: number = -1;
+
+  @ViewChild('searchInputElement') searchInputRef!: ElementRef<HTMLInputElement>;
 
   ventaForm = this.fb.group({
     fecha: ['', Validators.required],
@@ -52,41 +57,92 @@ export class NuevaVentaComponent implements OnInit {
   tiposVenta = ['Local', 'Delivery'];
 
   ngOnInit(): void {
-    // Leer queryParams para restaurar el estado del formulario
-    this.route.queryParams.subscribe(params => {
-      const tipoPago = params['tipoPago'] || '';
-      const tipoVenta = params['tipoVenta'] || '';
-      const fecha = params['fecha'] || '';
-      const montoPagado = params['montoPagado'] ? Number(params['montoPagado']) : 0;
-
-      this.ventaForm.patchValue({
-        fecha,
-        tipoPago,
-        tipoVenta,
-        montoPagado
-      });
-      this.calcularCambio();
-    });
+    this.ventaForm.valueChanges.subscribe(() => this.calcularCambio());
+    this.articuloForm.get('cantidad')?.valueChanges.subscribe(() => this.onQuantityOrDiscountChange());
+    this.articuloForm.get('descuento')?.valueChanges.subscribe(() => this.onQuantityOrDiscountChange());
+    this.articuloForm.get('articulo')?.valueChanges.subscribe(() => this.updateSubtotal()); // Actualizar subtotal al cambiar artículo
   }
 
-  onArticuloChange(): void {
-    const articuloSeleccionado = this.articulosDisponibles.find(
-      a => a.nombre === this.articuloForm.get('articulo')?.value
-    );
-    if (articuloSeleccionado) {
+  ngOnDestroy(): void {}
+
+  // Actualizar sugerencias al escribir
+  onSearchInput(event: Event): void {
+    const term = (event.target as HTMLInputElement).value;
+    console.log('Término escrito:', term);
+    this.filterSuggestions(term);
+    this.selectedIndex = -1;
+  }
+
+  // Filtrar sugerencias
+  private filterSuggestions(term: string): void {
+    const trimmedTerm = term.trim();
+    if (trimmedTerm.length === 0) {
+      this.filteredSuggestions = [...this.articulosDisponibles];
+    } else {
+      this.filteredSuggestions = this.articulosDisponibles.filter(articulo =>
+        articulo.nombre.toLowerCase().includes(trimmedTerm.toLowerCase())
+      );
+    }
+    console.log('Sugerencias filtradas:', this.filteredSuggestions);
+  }
+
+  // Manejar teclas (flechas y Enter)
+  onKeydown(event: KeyboardEvent): void {
+    if (!this.filteredSuggestions.length) return;
+
+    switch (event.key) {
+      case 'ArrowUp':
+        event.preventDefault();
+        this.selectedIndex = Math.max(0, this.selectedIndex - 1);
+        break;
+      case 'ArrowDown':
+        event.preventDefault();
+        this.selectedIndex = Math.min(this.filteredSuggestions.length - 1, this.selectedIndex + 1);
+        break;
+      case 'Enter':
+        event.preventDefault();
+        if (this.selectedIndex >= 0 && this.selectedIndex < this.filteredSuggestions.length) {
+          this.selectSuggestion(this.filteredSuggestions[this.selectedIndex].nombre);
+        }
+        break;
+    }
+
+    if (this.selectedIndex >= 0) {
+      const selectedName = this.filteredSuggestions[this.selectedIndex].nombre;
+      this.articuloForm.patchValue({ articulo: selectedName }, { emitEvent: true }); // Actualizar artículo en tiempo real
+    }
+    console.log('Índice seleccionado:', this.selectedIndex);
+  }
+
+  // Seleccionar una sugerencia
+  selectSuggestion(nombre: string): void {
+    const selectedArticulo = this.articulosDisponibles.find(a => a.nombre === nombre);
+    if (selectedArticulo) {
+      // Actualizar el formulario con los valores del artículo seleccionado
       this.articuloForm.patchValue({
-        precio: articuloSeleccionado.precio,
-        subtotal: articuloSeleccionado.precio * (this.articuloForm.get('cantidad')?.value ?? 1)
-      });
+        articulo: selectedArticulo.nombre,
+        precio: selectedArticulo.precio
+      }, { emitEvent: true });
+      this.updateSubtotal(); // Recalcular subtotal
+      this.filteredSuggestions = [];
+      this.selectedIndex = -1;
+      this.searchInputRef.nativeElement.value = selectedArticulo.nombre; // Forzar actualización visual
+      this.searchInputRef.nativeElement.focus();
+      console.log('Formulario actualizado:', this.articuloForm.value); // Depuración
     }
   }
 
-  onCantidadOrDescuentoChange(): void {
-    const precio = this.articuloForm.get('precio')?.value ?? 0;
-    const cantidad = this.articuloForm.get('cantidad')?.value ?? 1;
-    const descuento = this.articuloForm.get('descuento')?.value ?? 0;
+  // Actualizar subtotal basado en cantidad y descuento
+  private updateSubtotal(): void {
+    const precio = this.articuloForm.get('precio')?.value || 0;
+    const cantidad = this.articuloForm.get('cantidad')?.value || 1;
+    const descuento = this.articuloForm.get('descuento')?.value || 0;
     const subtotal = (precio * cantidad) - descuento;
-    this.articuloForm.patchValue({ subtotal });
+    this.articuloForm.patchValue({ subtotal }, { emitEvent: false });
+  }
+
+  onQuantityOrDiscountChange(): void {
+    this.updateSubtotal();
   }
 
   agregarArticulo(): void {
@@ -96,37 +152,24 @@ export class NuevaVentaComponent implements OnInit {
     }
 
     const articulo: Articulo = {
-      nombre: this.articuloForm.get('articulo')?.value ?? '',
-      cantidad: this.articuloForm.get('cantidad')?.value ?? 1,
-      precio: this.articuloForm.get('precio')?.value ?? 0,
-      descuento: this.articuloForm.get('descuento')?.value ?? 0,
-      subtotal: this.articuloForm.get('subtotal')?.value ?? 0
+      nombre: this.articuloForm.get('articulo')?.value || '',
+      cantidad: this.articuloForm.get('cantidad')?.value || 1,
+      precio: this.articuloForm.get('precio')?.value || 0,
+      descuento: this.articuloForm.get('descuento')?.value || 0,
+      subtotal: this.articuloForm.get('subtotal')?.value || 0
     };
 
     this.articulosAgregados.push(articulo);
     this.totalVenta = this.articulosAgregados.reduce((sum, a) => sum + a.subtotal, 0);
     this.calcularCambio();
-    this.articuloForm.reset({ cantidad: 1, descuento: 0 });
+    this.articuloForm.reset({ cantidad: 1, descuento: 0, articulo: '', precio: 0, subtotal: 0 });
+    this.filteredSuggestions = [];
+    this.searchInputRef.nativeElement.value = ''; // Limpiar input manualmente
   }
 
   calcularCambio(): void {
-    const montoPagado = this.ventaForm.get('montoPagado')?.value ?? 0;
+    const montoPagado = this.ventaForm.get('montoPagado')?.value || 0;
     this.cambio = montoPagado - this.totalVenta;
-  }
-
-  // Actualizar queryParams al cambiar el formulario
-  updateQueryParams(): void {
-    const formValue = this.ventaForm.value;
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: {
-        fecha: formValue.fecha,
-        tipoPago: formValue.tipoPago,
-        tipoVenta: formValue.tipoVenta,
-        montoPagado: formValue.montoPagado
-      },
-      queryParamsHandling: 'merge'
-    });
   }
 
   guardarVenta(): void {
@@ -135,13 +178,17 @@ export class NuevaVentaComponent implements OnInit {
       return;
     }
 
-    console.log('Venta guardada:', {
-      ...this.ventaForm.value,
-      articulos: this.articulosAgregados,
-      total: this.totalVenta,
+    const venta = {
+      fecha: this.ventaForm.get('fecha')?.value,
+      tipoPago: this.ventaForm.get('tipoPago')?.value,
+      tipoVenta: this.ventaForm.get('tipoVenta')?.value,
+      montoPagado: this.ventaForm.get('montoPagado')?.value,
+      articulos: [...this.articulosAgregados],
+      totalVenta: this.totalVenta,
       cambio: this.cambio
-    });
+    };
 
+    console.log('Venta guardada (simulación):', venta);
     this.resetForm();
   }
 
@@ -151,14 +198,12 @@ export class NuevaVentaComponent implements OnInit {
 
   private resetForm(): void {
     this.ventaForm.reset();
-    this.articuloForm.reset({ cantidad: 1, descuento: 0 });
+    this.articuloForm.reset({ cantidad: 1, descuento: 0, articulo: '', precio: 0, subtotal: 0 });
     this.articulosAgregados = [];
     this.totalVenta = 0;
     this.cambio = 0;
-    // Limpiar queryParams
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: {}
-    });
+    this.filteredSuggestions = [];
+    this.selectedIndex = -1;
+    this.searchInputRef.nativeElement.value = ''; // Limpiar input manualmente
   }
 }
