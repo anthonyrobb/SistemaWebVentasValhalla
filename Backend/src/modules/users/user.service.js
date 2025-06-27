@@ -70,7 +70,7 @@ export const UsuarioService = {
       attributes: { exclude: ['password'] }
     });
     
-    return usuario ? usuario.get() : null;
+    return usuario ? usuario.get({plain: true}) : null;
   },
   async actualizarUsuarioPorId(id, data) {
     const usuario = await Usuario.findByPk(uuidToBuffer(id));
