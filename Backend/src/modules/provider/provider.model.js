@@ -2,17 +2,16 @@ import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../../config/database.js';
 import { TipoDeDocumento } from '../typeDocument/typeDocument.model.js';
 import { Empresa } from '../company/company.model.js';
-import { bufferToUuid } from '../../utils/uuid.js';
+import { bufferToUuid } from '../../utils/uuid.utils.js';
 export class Proveedor extends Model {}
 
 Proveedor.init({
-  id_proveedores: {
+  id_proveedor: {
     type:  DataTypes.BLOB('tiny'),
-    defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
     allowNull: false,
     get() {
-      const value = this.getDataValue('id_proveedores');
+      const value = this.getDataValue('id_proveedor');
       return value ? bufferToUuid(value) : null;
     }
   },
@@ -45,11 +44,15 @@ Proveedor.init({
     }
   },
   id_empresa: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BLOB('tiny'), // UUID en formato BINARY(16)
     allowNull: false,
     references: {
       model: Empresa,
       key: 'id_empresa'
+    },
+    get() {
+      const value = this.getDataValue('id_empresa');
+      return value ? bufferToUuid(value) : null;
     }
   }
 }, {

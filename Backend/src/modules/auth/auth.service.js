@@ -1,7 +1,8 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { Usuario } from '../users/user.model.js';
-import { bufferToUuid } from '../../utils/uuid.utils.js';
+import 'dotenv/config';
+
 
 const SECRET = process.env.JWT_SECRET || 'secreto';
 
@@ -18,7 +19,7 @@ export const AuthService = {
     const token = jwt.sign(
       { id: usuario.id_usuario, rol: usuario.id_rol_de_usuario==1 ? 'administrador' : 'vendedor', email: usuario.email },
       SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: process.env.JWT_EXPIRATION || '1h' }
     );
 
     return { token, usuario: 

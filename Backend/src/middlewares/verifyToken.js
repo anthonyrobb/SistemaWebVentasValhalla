@@ -7,6 +7,7 @@ const SECRET = process.env.JWT_SECRET;
 export const verifyToken = (rolesPermitidos = []) => {
   return async (req, res, next) => {
     const authHeader = req.headers.authorization;
+    console.log("Authorization header:", authHeader); // Añade esto
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({ error: "Token no proporcionado" });
