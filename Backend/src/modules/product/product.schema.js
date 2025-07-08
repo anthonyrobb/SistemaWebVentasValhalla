@@ -1,5 +1,5 @@
 import { z } from 'zod';
-const precioDeVentaSchema = z.preprocess(
+export const precioDeVentaSchema = z.preprocess(
   (input) => {
     if (typeof input === 'string' || typeof input === 'number') {
       const parsed = parseFloat(input.toString());
