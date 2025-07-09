@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './features/auth/login/login.component';
-import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { NuevaVentaComponent } from './features/ventas/nueva-venta/nueva-venta.component';
 import { ListaVentasComponent } from './features/ventas/lista-ventas/lista-ventas.component';
 import { ListaProductosComponent } from './features/inventario/lista-productos/lista-productos.component';
@@ -19,7 +18,6 @@ export const routes: Routes = [
     component: MainLayoutComponent,
     canActivate: [authGuard],
     children: [
-      { path: 'dashboard', component: DashboardComponent },
       { path: 'nueva-venta', component: NuevaVentaComponent },
       { path: 'ventas-list', component: ListaVentasComponent },
       { path: 'lista-productos', component: ListaProductosComponent },
@@ -28,9 +26,9 @@ export const routes: Routes = [
       { path: 'lista-proveedores', component: ListaProveedoresComponent },
       { path: 'caja', component: CajaComponent },
       { path: 'nuevo-usuario', component: NuevoUsuarioComponent },
-      { path: 'consulta-compras', component: DashboardComponent }, // Placeholder
-      { path: 'consulta-ventas', component: DashboardComponent }, // Placeholder
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+      { path: 'consulta-compras', component: ListaComprasComponent }, // Reutilizamos ListaCompras en lugar de Dashboard
+      { path: 'consulta-ventas', component: ListaVentasComponent }, // Reutilizamos ListaVentas en lugar de Dashboard
+      { path: '', redirectTo: 'nueva-venta', pathMatch: 'full' } // Redirige la raíz a nueva-venta
     ]
   },
   { path: '**', redirectTo: '/login' }

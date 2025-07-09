@@ -1,22 +1,47 @@
-:host {
-  display: block;
-}
-
 .card {
   border: none;
-  box-shadow: none;
-  background: transparent;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
 }
 
 .card-header {
-  background-color: #891738;
-  color: white;
-  border-radius: 8px 8px 0 0;
-  padding: 15px 20px;
-  font-size: 1.25rem;
-  font-weight: 500;
+  background-color: #f8f9fa;
+  border-bottom: none;
+  padding: 1rem 1.5rem;
 }
 
-.card-body {
-  padding: 20px;
+.table-responsive {
+  min-height: 0.1rem;
+}
+
+.btn-primary {
+  transition: all 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: #8b1a3e;
+  border-color: #8b1a3e;
+}
+
+.modal.show {
+  display: block;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 768px) {
+  .card-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .card-header .btn {
+    width: 100%;
+  }
+  .input-group {
+    width: 100% !important;
+  }
+  .table th,
+  .table td {
+    font-size: 0.9rem;
+    padding: 0.5rem;
+  }
 }
