@@ -64,7 +64,7 @@
             <input
               type="text"
               class="form-control"
-              [value]="cambio | currency"
+              [value]="cambio | currency:'PEN':'S/ ':'1.2-2'"
               readonly>
           </div>
         </form>
@@ -85,15 +85,15 @@
               <tr *ngFor="let articulo of articulosAgregados">
                 <td>{{ articulo.nombre }}</td>
                 <td>{{ articulo.cantidad }}</td>
-                <td>{{ articulo.precio | currency }}</td>
-                <td>{{ articulo.descuento | currency }}</td>
-                <td>{{ articulo.subtotal | currency }}</td>
+                <td>{{ articulo.precio | currency:'PEN':'S/ ':'1.2-2' }}</td>
+                <td>{{ articulo.descuento | currency:'PEN':'S/ ':'1.2-2' }}</td>
+                <td>{{ articulo.subtotal | currency:'PEN':'S/ ':'1.2-2' }}</td>
               </tr>
             </tbody>
             <tfoot>
               <tr>
                 <th colspan="4" class="text-end">Total:</th>
-                <th>{{ totalVenta | currency }}</th>
+                <th>{{ totalVenta | currency:'PEN':'S/ ':'1.2-2' }}</th>
               </tr>
             </tfoot>
           </table>
@@ -135,7 +135,7 @@
                 class="suggestion-item"
                 [class.selected]="i === selectedIndex"
                 (click)="selectSuggestion(suggestion.nombre)">
-                {{ suggestion.nombre }} - S/ {{ suggestion.precio }}
+                {{ suggestion.nombre }} - {{ suggestion.precio | currency:'PEN':'S/ ':'1.2-2' }}
               </div>
             </div>
             <div *ngIf="articuloForm.get('articulo')?.invalid && articuloForm.get('articulo')?.touched" class="invalid-feedback">

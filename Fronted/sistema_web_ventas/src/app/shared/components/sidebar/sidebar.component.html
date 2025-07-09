@@ -14,14 +14,6 @@
 
   <!-- Menú de navegación -->
   <ul class="nav flex-column">
-    <!-- Dashboard -->
-    <li class="nav-item">
-      <a class="nav-link" [ngClass]="{'active': activeSection === 'dashboard'}" (click)="navigateTo('dashboard')">
-        <span class="nav-content">
-          <i class="bi bi-house-door me-2"></i> Dashboard
-        </span>
-      </a>
-    </li>
 
     <!-- Ventas (con submenú) -->
     <li class="nav-item">
@@ -114,29 +106,7 @@
         </span>
       </a>
     </li>
-
-    <!-- Reportes (con submenú) -->
-    <li class="nav-item">
-      <a class="nav-link d-flex justify-content-between align-items-center" (click)="toggleSubmenu('reportes')">
-        <span class="nav-content">
-          <i class="bi bi-bar-chart me-2"></i> Reportes
-        </span>
-        <i class="bi" [ngClass]="{'bi-chevron-down': !submenus.reportes, 'bi-chevron-up': submenus.reportes}"></i>
-      </a>
-      <ul class="submenu" [ngClass]="{'show': submenus.reportes}">
-        <li>
-          <a class="nav-link ps-4" [ngClass]="{'active': activeSection === 'consulta-compras'}" (click)="navigateTo('consulta-compras')">
-            <span class="nav-content">Consulta de Compras</span>
-          </a>
-        </li>
-        <li>
-          <a class="nav-link ps-4" [ngClass]="{'active': activeSection === 'consulta-ventas'}" (click)="navigateTo('consulta-ventas')">
-            <span class="nav-content">Consulta de Ventas</span>
-          </a>
-        </li>
-      </ul>
-    </li>
-  </ul>
+    
 
   <!-- Botón Cerrar Sesión -->
   <div class="mt-auto p-3">
@@ -144,4 +114,3 @@
       <i class="bi bi-box-arrow-left me-2"></i> Cerrar Sesión
     </button>
   </div>
-</div>

@@ -1,15 +1,8 @@
-import { Component, OnInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, OnDestroy, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-interface Articulo {
-  nombre: string;
-  cantidad: number;
-  precio: number;
-  descuento: number;
-  subtotal: number;
-}
+import { VentasService, Articulo, Venta } from '../../../services/ventas.service'; // Ruta verificada
 
 @Component({
   selector: 'app-nueva-venta',
@@ -20,6 +13,7 @@ interface Articulo {
 })
 export class NuevaVentaComponent implements OnInit, OnDestroy {
   private fb = new FormBuilder();
+  private ventasService: VentasService = inject(VentasService);
 
   articulosDisponibles = [
     { nombre: 'Whisky Johnnie Walker', precio: 150 },
@@ -60,12 +54,11 @@ export class NuevaVentaComponent implements OnInit, OnDestroy {
     this.ventaForm.valueChanges.subscribe(() => this.calcularCambio());
     this.articuloForm.get('cantidad')?.valueChanges.subscribe(() => this.onQuantityOrDiscountChange());
     this.articuloForm.get('descuento')?.valueChanges.subscribe(() => this.onQuantityOrDiscountChange());
-    this.articuloForm.get('articulo')?.valueChanges.subscribe(() => this.updateSubtotal()); // Actualizar subtotal al cambiar artículo
+    this.articuloForm.get('articulo')?.valueChanges.subscribe(() => this.updateSubtotal());
   }
 
   ngOnDestroy(): void {}
 
-  // Actualizar sugerencias al escribir
   onSearchInput(event: Event): void {
     const term = (event.target as HTMLInputElement).value;
     console.log('Término escrito:', term);
@@ -73,7 +66,6 @@ export class NuevaVentaComponent implements OnInit, OnDestroy {
     this.selectedIndex = -1;
   }
 
-  // Filtrar sugerencias
   private filterSuggestions(term: string): void {
     const trimmedTerm = term.trim();
     if (trimmedTerm.length === 0) {
@@ -86,7 +78,6 @@ export class NuevaVentaComponent implements OnInit, OnDestroy {
     console.log('Sugerencias filtradas:', this.filteredSuggestions);
   }
 
-  // Manejar teclas (flechas y Enter)
   onKeydown(event: KeyboardEvent): void {
     if (!this.filteredSuggestions.length) return;
 
@@ -109,30 +100,27 @@ export class NuevaVentaComponent implements OnInit, OnDestroy {
 
     if (this.selectedIndex >= 0) {
       const selectedName = this.filteredSuggestions[this.selectedIndex].nombre;
-      this.articuloForm.patchValue({ articulo: selectedName }, { emitEvent: true }); // Actualizar artículo en tiempo real
+      this.articuloForm.patchValue({ articulo: selectedName }, { emitEvent: true });
     }
     console.log('Índice seleccionado:', this.selectedIndex);
   }
 
-  // Seleccionar una sugerencia
   selectSuggestion(nombre: string): void {
     const selectedArticulo = this.articulosDisponibles.find(a => a.nombre === nombre);
     if (selectedArticulo) {
-      // Actualizar el formulario con los valores del artículo seleccionado
       this.articuloForm.patchValue({
         articulo: selectedArticulo.nombre,
         precio: selectedArticulo.precio
       }, { emitEvent: true });
-      this.updateSubtotal(); // Recalcular subtotal
+      this.updateSubtotal();
       this.filteredSuggestions = [];
       this.selectedIndex = -1;
-      this.searchInputRef.nativeElement.value = selectedArticulo.nombre; // Forzar actualización visual
+      this.searchInputRef.nativeElement.value = selectedArticulo.nombre;
       this.searchInputRef.nativeElement.focus();
-      console.log('Formulario actualizado:', this.articuloForm.value); // Depuración
+      console.log('Formulario actualizado:', this.articuloForm.value);
     }
   }
 
-  // Actualizar subtotal basado en cantidad y descuento
   private updateSubtotal(): void {
     const precio = this.articuloForm.get('precio')?.value || 0;
     const cantidad = this.articuloForm.get('cantidad')?.value || 1;
@@ -164,7 +152,7 @@ export class NuevaVentaComponent implements OnInit, OnDestroy {
     this.calcularCambio();
     this.articuloForm.reset({ cantidad: 1, descuento: 0, articulo: '', precio: 0, subtotal: 0 });
     this.filteredSuggestions = [];
-    this.searchInputRef.nativeElement.value = ''; // Limpiar input manualmente
+    this.searchInputRef.nativeElement.value = '';
   }
 
   calcularCambio(): void {
@@ -178,17 +166,19 @@ export class NuevaVentaComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const venta = {
-      fecha: this.ventaForm.get('fecha')?.value,
-      tipoPago: this.ventaForm.get('tipoPago')?.value,
-      tipoVenta: this.ventaForm.get('tipoVenta')?.value,
-      montoPagado: this.ventaForm.get('montoPagado')?.value,
+    const nuevaVenta: Venta = {
+      id: Date.now(),
+      fecha: this.ventaForm.get('fecha')?.value || '',
+      tipoPago: this.ventaForm.get('tipoPago')?.value || '',
+      tipoVenta: this.ventaForm.get('tipoVenta')?.value || '',
+      montoPagado: this.ventaForm.get('montoPagado')?.value || 0,
       articulos: [...this.articulosAgregados],
       totalVenta: this.totalVenta,
       cambio: this.cambio
     };
 
-    console.log('Venta guardada (simulación):', venta);
+    this.ventasService.agregarVenta(nuevaVenta);
+    console.log('Venta guardada en servicio:', nuevaVenta);
     this.resetForm();
   }
 
@@ -204,6 +194,6 @@ export class NuevaVentaComponent implements OnInit, OnDestroy {
     this.cambio = 0;
     this.filteredSuggestions = [];
     this.selectedIndex = -1;
-    this.searchInputRef.nativeElement.value = ''; // Limpiar input manualmente
+    this.searchInputRef.nativeElement.value = '';
   }
 }

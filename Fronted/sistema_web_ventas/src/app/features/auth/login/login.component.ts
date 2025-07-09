@@ -33,7 +33,7 @@ export class LoginComponent {
     const password = this.loginForm.value.password ?? '';
 
     if (this.authService.login(username, password)) {
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/nueva-venta']);
     } else {
       this.errorMessage = 'Usuario o contraseña incorrectos';
     }
