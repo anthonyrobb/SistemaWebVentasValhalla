@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { Usuario } from '../users/user.model.js';
 import 'dotenv/config';
+import { bufferToUuid} from '../../utils/uuid.utils.js';
 
 
 const SECRET = process.env.JWT_SECRET || 'secreto';
@@ -10,6 +11,7 @@ export const AuthService = {
   async login({ email, password }) {
 
     const usuario = await Usuario.findOne({ where: { email } });
+        console.log("usuario autenticado:", usuario);
 
     if (!usuario) throw new Error('Email o contraseña incorrectos');
 
@@ -21,7 +23,6 @@ export const AuthService = {
       SECRET,
       { expiresIn: process.env.JWT_EXPIRATION || '1h' }
     );
-
     return { token, usuario: 
         { 
             id: usuario.id_usuario, 

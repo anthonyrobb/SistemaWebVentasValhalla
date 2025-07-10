@@ -8,12 +8,15 @@ import { providerRoutes } from './modules/provider/provider.routes.js';
 import { productRoutes } from './modules/product/product.routes.js';
 import { buysRoutes } from './modules/buys/buys.routes.js';
 import { clientRoutes } from './modules/client/client.routes.js';
+import { salesRoutes } from './modules/sales/sales.routes.js';
+
 export const routes = Router();
 
-routes.use('/users', verifyToken(['administrador']), userRoutes);
+routes.use('/users', verifyToken(['administrador']),userRoutes);
 routes.use('/auth', authRoutes);
 routes.use('/companies', verifyToken(['administrador']), companyRoutes);
 routes.use('/products', verifyToken(['administrador']), productRoutes);
-routes.use('/providers', verifyToken(['administrador']), providerRoutes);
+routes.use('/providers', providerRoutes);
 routes.use('/buys', verifyToken(['administrador']), buysRoutes);
 routes.use('/clients', verifyToken(['administrador','vendedor']), clientRoutes);
+routes.use('/sales', verifyToken(['administrador', 'vendedor']), salesRoutes);
